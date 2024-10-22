@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.0.0",
   "private": false,
-  "description": "Help you create projects that support `unplugin-auto-import`!",
+  "description": "Help you create projects that support unplugin-auto-import!",
   "author": "s3xysteak",
   "license": "MIT",
   "homepage": "https://github.com/s3xysteak/auto-import-helper",
