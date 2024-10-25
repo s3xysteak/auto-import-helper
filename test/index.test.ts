@@ -1,7 +1,7 @@
-import { fileURLToPath } from 'node:url'
+import * as fs from 'node:fs/promises'
 import { expect, it } from 'vitest'
 
-import { createImport, createResolver, fromTransform } from '../src'
+import { createImport, createResolver, transformFile, transformString } from '../src'
 import * as labTs from './lab/lab-ts'
 
 it('import', () => {
@@ -25,24 +25,26 @@ it('module', () => {
   expect(v()).toEqual({ 'lab-ts': ['oneType', 'getTwoType'] })
 })
 
-it('fromTransform', async () => {
-  const val = await fromTransform(
-    `createImport('hello-world', [/** auto-import-helper */] as const)`,
-    async () => {
-      const val = await Promise.all([
-        import('./lab/lab-ts'),
-        import('./lab/lab-js.js' as any),
-      ])
-      return val.map(m => Object.keys(m)).reduce((acc, val) => [...acc, ...val], [])
-    },
-  )
-  expect(
-    `import { createImport } from '../../src'
-
-${val}`,
-  ).toMatchFileSnapshot(r('./__snapshots__/fromTransform.ts'))
+it('transformString', () => {
+  const content = `
+/** auto-import-helper */
+const foo = []
+`
+  expect(transformString(content, ['bar'])).toMatchSnapshot()
 })
 
-function r(path: string) {
-  return fileURLToPath(new URL(path, import.meta.url))
-}
+it('transformFile', async () => {
+  const path = new URL('./lab/import.ts', import.meta.url)
+  const init = () => fs.writeFile(path, `import { createImport } from '../../src'
+
+/** auto-import-helper */
+export default createImport('name', [])
+`)
+  // init
+  await init()
+
+  await transformFile(path, Object.keys(await import(new URL('./lab/lab-ts.ts', import.meta.url).href)))
+  expect(await fs.readFile(path, 'utf-8')).toMatchSnapshot()
+
+  await init()
+})

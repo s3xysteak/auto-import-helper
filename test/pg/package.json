@@ -1,0 +1,39 @@
+{
+  "name": "pg",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./import": {
+      "types": "./dist/import.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/import.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "unbuild --stub",
+    "build": "esno ./scripts/update-import.ts && unbuild",
+    "test": "vitest",
+    "type:check": "tsc",
+    "release": "bumpp",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "auto-import-helper": "workspace:*"
+  },
+  "devDependencies": {
+    "unbuild": "catalog:"
+  }
+}

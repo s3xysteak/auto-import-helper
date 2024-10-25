@@ -1,3 +1,6 @@
+import type { PathLike } from 'node:fs'
+import * as fs from 'node:fs/promises'
+
 export type ImportParam<T extends PropertyKey> = Partial<Record<T, string>>
 export type ImportReturns = Record<string, Array<string | [string, string]>>
 
@@ -18,10 +21,10 @@ export type ImportReturns = Record<string, Array<string | [string, string]>>
  * })
  * ```
  */
-export function createImport<T extends string[]>(packageName: string, names: T) {
-  return (map?: ImportParam<typeof names[number]>): ImportReturns => {
+export function createImport<T extends string[]>(packageName: string, exports: T) {
+  return (map?: ImportParam<typeof exports[number]>): ImportReturns => {
     return {
-      [packageName]: names.map(v => map && (map as any)[v] ? [v, (map as any)[v]] : v),
+      [packageName]: exports.map(v => map && (map as any)[v] ? [v, (map as any)[v]] : v),
     }
   }
 }
@@ -43,10 +46,10 @@ export function createImport<T extends string[]>(packageName: string, names: T) 
  * })
  * ```
  */
-export function createResolver<T extends string[]>(packageName: string, names: T) {
-  return (map?: ImportParam<typeof names[number]>) =>
+export function createResolver<T extends string[]>(packageName: string, exports: T) {
+  return (map?: ImportParam<typeof exports[number]>) =>
     (name: string) => {
-      if (!names.includes(name))
+      if (!exports.includes(name))
         return
 
       return {
@@ -57,23 +60,44 @@ export function createResolver<T extends string[]>(packageName: string, names: T
     }
 }
 
-export type Awaitable<T> = T | PromiseLike<T>
-export async function fromTransform(
-  code: string,
-  handler: () => Awaitable<string[]>,
-  reg: RegExp = /\[\s*\/\*{1,2}\s*auto-import-helper\s*\*\/\s*\]/g,
-) {
-  return code.replace(reg, JSON.stringify(await handler()))
+/**
+ * Replace the first array after auto-import-helper comment by a target string
+ * @param str A string which will be transformed
+ * @param insert If array, stringify it by `JSON.stringify`
+ *
+ * ## example
+ *
+ * /&ast;&ast; auto-import-helper &ast;/
+ *
+ * const foo = []
+ *
+ * ```
+ * transformString(aboveString, ['bar']) // ->
+ * ```
+ *
+ * /&ast;&ast; auto-import-helper &ast;/
+ *
+ * const foo = ['bar']
+ */
+export function transformString(str: string, insert: string | string[]) {
+  return str.replace(
+    /(\/\*{1,2}\s*auto-import-helper\s*\*\/[^[]*)(\[.*?\])/s,
+    (_, $1) => `${$1}${Array.isArray(insert) ? JSON.stringify(insert) : insert}`,
+  )
 }
 
-export function autoImportHelperPlugin(
-  handler: Parameters<typeof fromTransform>[1],
-  condition: (id: string) => boolean = id => /src[/|\\]import.[t|j]sx?$/.test(id),
-) {
-  return {
-    name: 'auto-import-helper',
-    transform(code: string, id: string) {
-      return condition(id) ? fromTransform(code, handler) : undefined
-    },
-  }
+/**
+ * Make `transformString` work on a js file.
+ *
+ * ## example
+ * ```js
+ * await transformFile(
+ *   './src/import.ts',
+ *   Object.keys(await import('./src/index'))
+ * )
+ * ```
+ */
+export async function transformFile(path: PathLike | fs.FileHandle, exports: string[]) {
+  const content = await fs.readFile(path, { encoding: 'utf-8' })
+  await fs.writeFile(path, transformString(content, exports))
 }

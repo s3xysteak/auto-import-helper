@@ -1,2 +1,5 @@
 packages:
   - test/pg
+
+catalog:
+  unbuild: ^2.0.0
