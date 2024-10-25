@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "private": false,
+  "packageManager": "pnpm@9.11.0",
   "description": "Help you support unplugin-auto-import/unplugin-vue-components out-of-the-box!",
   "author": "s3xysteak",
   "license": "MIT",
@@ -39,7 +40,8 @@
     "build": "unbuild",
     "test": "vitest",
     "type:check": "tsc",
-    "release": "bumpp",
+    "release": "tsc && bumpp",
+    "publish:ci": "pnpm publish --access public --no-git-checks",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
