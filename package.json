@@ -33,6 +33,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "dev": "unbuild --stub",
     "build": "unbuild",
     "test": "vitest",
     "type:check": "tsc",

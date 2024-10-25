@@ -1,4 +1,4 @@
-export type ImportParam<T extends PropertyKey> = Partial<{ [K in T]: string }>
+export type ImportParam<T extends PropertyKey> = Partial<Record<T, string>>
 export type ImportReturns = Record<string, Array<string | [string, string]>>
 
 /**
@@ -68,7 +68,7 @@ export async function fromTransform(
 
 export function autoImportHelperPlugin(
   handler: Parameters<typeof fromTransform>[1],
-  condition: (id: string) => boolean = id => id.includes('src/import'),
+  condition: (id: string) => boolean = id => /src[/|\\]import.[t|j]sx?$/.test(id),
 ) {
   return {
     name: 'auto-import-helper',
