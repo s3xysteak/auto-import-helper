@@ -1,8 +1,10 @@
 # auto-import-helper
 
+[English](/README.md) | 简体中文
+
 简洁、无依赖、超迷你！
 
-助你开箱即用支持 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) ！
+助你开箱即用支持 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import)/[unplugin-vue-components](https://github.com/unplugin/unplugin-vue-components) ！
 
 ## 使用
 
@@ -69,7 +71,7 @@ import { createImport } from 'auto-import-helper'
 import pkg from '../package.json'
 
 /** auto-import-helper */
-export default createImport(pkg.json, [] as const)
+export default createImport(pkg.name, [] as const)
 ```
 
 ```js
@@ -92,4 +94,4 @@ await transformFile(
 }
 ```
 
-[示例](/test/pg)
+移步至[示例](/test/pg)

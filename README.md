@@ -1,8 +1,10 @@
 # auto-import-helper
 
+English | [简体中文](/README-zh.md)
+
 Concise, zero dependency, super mini!
 
-Help you support [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) out-of-the-box!
+Help you support [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import)/[unplugin-vue-components](https://github.com/unplugin/unplugin-vue-components) out-of-the-box!
 
 ## Usage
 
@@ -69,7 +71,7 @@ import { createImport } from 'auto-import-helper'
 import pkg from '../package.json'
 
 /** auto-import-helper */
-export default createImport(pkg.json, [] as const)
+export default createImport(pkg.name, [] as const)
 ```
 
 ```js
@@ -92,4 +94,4 @@ Edit your script:
 }
 ```
 
-[Example](/test/pg)
+Refer to [Example](/test/pg)
