@@ -1,25 +1,25 @@
 # auto-import-helper
 
-Concise, zero dependency, super mini!
+简洁、无依赖、超迷你！
 
-Help you support [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) out-of-the-box!
+助你开箱即用支持 [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) ！
 
-## Usage
+## 使用
 
-### Basic usage
+### 基本使用
 
-In your lib:
+在你的库中：
 
 ```ts
 // my-lib
 import { createImport, createResolver } from 'auto-import-helper'
 
-// use `as const` for better type hinting
+// 使用 `as const` 是为了获得更好的类型提示
 export const I = createImport('lodash', ['filter'] as const)
 export const R = createResolver('nuxt-ui', ['Button'] as const)
 ```
 
-User:
+用户：
 
 ```js
 import { I, R } from 'my-lib'
@@ -33,23 +33,23 @@ export default defineConfig({
   plugins: [
     AutoImport({
       imports: [
-        // default
+        // 默认
         I(),
-        // rename
+        // 重命名
         I({
           filter: 'myFilter'
         })
       ],
       resolvers: [
-        // Not recommended to use resolver in auto-import, but you can do that
+        // 不推荐在auto-import中使用resolver，但你可以这么做
         R()
       ]
     }),
     Components({
       resolvers: [
-        // default
+        // 默认
         R(),
-        // rename
+        // 重命名
         R({
           Button: 'NButton'
         })
@@ -59,9 +59,9 @@ export default defineConfig({
 })
 ```
 
-### Automation
+### 自动化
 
-Use `transformFile` function to achieve automation:
+使用 `transformFile` 方法实现自动化:
 
 ```ts
 // src/import.ts
@@ -82,7 +82,7 @@ await transformFile(
 )
 ```
 
-Edit your script:
+修改你的脚本：
 
 ```json
 {
@@ -92,4 +92,4 @@ Edit your script:
 }
 ```
 
-[Example](/test/pg)
+[示例](/test/pg)
