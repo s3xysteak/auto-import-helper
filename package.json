@@ -1,7 +1,7 @@
 {
   "name": "auto-import-helper",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "description": "Help you support unplugin-auto-import/unplugin-vue-components out-of-the-box!",
   "author": "s3xysteak",
