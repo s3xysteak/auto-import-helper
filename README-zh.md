@@ -60,38 +60,3 @@ export default defineConfig({
   ]
 })
 ```
-
-### 自动化
-
-使用 `transformFile` 方法实现自动化:
-
-```ts
-// src/import.ts
-import { createImport } from 'auto-import-helper'
-import pkg from '../package.json'
-
-/** auto-import-helper */
-export default createImport(pkg.name, [] as const)
-```
-
-```js
-// scripts/update-import.ts
-import { transformFile } from 'auto-import-helper'
-
-await transformFile(
-  './src/import.ts',
-  Object.keys(await import('./src/index.ts'))
-)
-```
-
-修改你的脚本：
-
-```json
-{
-  "scripts": {
-    "build": "esno ./scripts/update-import.ts && unbuild"
-  }
-}
-```
-
-移步至[示例](/test/pg)
