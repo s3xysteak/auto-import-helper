@@ -70,7 +70,7 @@ export function createResolver<T extends string[]>(packageName: string, exports:
  *
  * ```js
  * const search = createSearch('createImport')
- * const [start, end] = search(codeString)
+ * const [start, end] = search(codeString) // index of [ and ]
  * await fs.writeFile('path', codeString.slice(0, start) + JSON.stringify(['foo']) + codeString.slice(end) )
  * ```
  */

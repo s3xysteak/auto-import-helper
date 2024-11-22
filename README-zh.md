@@ -60,3 +60,28 @@ export default defineConfig({
   ]
 })
 ```
+
+### 自动化
+
+使用内置的 `createSearch` 函数:
+
+```js
+import { createSearch } from 'auto-import-help'
+
+const search = createSearch('createImport')
+search(`
+import { createImport } from 'auto-import-helper'
+export default createImport('name', [] as const)
+`) // -> [87, 89]
+```
+
+`search`的返回值为`[`和`]`的索引，你可以像这样使用它:
+
+```js
+const code = await fs.readFile('path', 'utf-8')
+
+const search = createSearch('createImport')
+const [start, end] = search(code)
+
+await fs.writeFile('path', code.slice(0, start) + JSON.stringify(['foo']) + code.slice(end))
+```
