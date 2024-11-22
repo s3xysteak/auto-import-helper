@@ -56,3 +56,78 @@ export function createResolver<T extends string[]>(packageName: string, exports:
       }
     }
 }
+
+/**
+ * Helper to search array index for code.
+ * ## example
+ *
+ * Assume the code is:
+ *
+ * ```js
+ * import { createImport } from 'auto-import-helper'
+ * export default createImport('name', [] as const)
+ * ```
+ *
+ * ```js
+ * const search = createSearch('createImport')
+ * const [start, end] = search(codeString)
+ * await fs.writeFile('path', codeString.slice(0, start) + JSON.stringify(['foo']) + codeString.slice(end) )
+ * ```
+ */
+export function createSearch(prefix: 'createImport' | 'createResolver' | string & {}) {
+  return (str: string) => {
+    const startIndex = str.indexOf(`${prefix}(`)
+    if (startIndex < 0)
+      return null
+
+    let bracketCount = 0
+    let commaIndex = startIndex + prefix.length + 1
+
+    while (commaIndex < str.length) {
+      if (str[commaIndex] === ',' && bracketCount === 0)
+        break
+
+      if (str[commaIndex] === '(') {
+        bracketCount++
+      }
+      else if (str[commaIndex] === ')') {
+        bracketCount--
+        if (bracketCount < 0)
+          return null
+      }
+
+      commaIndex++
+    }
+
+    if (commaIndex >= str.length)
+      return null
+
+    const arrStart = str.indexOf('[', commaIndex)
+    if (arrStart < 0)
+      return null
+
+    let squareBracketCount = 0
+    let arrEnd = arrStart + 1
+
+    while (arrEnd < str.length) {
+      if (str[arrEnd] === ']' && squareBracketCount === 0)
+        break
+
+      if (str[arrEnd] === '[') {
+        squareBracketCount++
+      }
+      else if (str[arrEnd] === ']') {
+        squareBracketCount--
+        if (squareBracketCount < 0)
+          return null
+      }
+
+      arrEnd++
+    }
+
+    if (arrEnd >= str.length)
+      return null
+
+    return [arrStart, arrEnd + 1]
+  }
+}
