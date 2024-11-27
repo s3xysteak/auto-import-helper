@@ -9,6 +9,7 @@ export type ImportReturns = Record<string, Array<string | [string, string]>>
  *
  * // user
  * import LodashImport from './import.js'
+ *
  * export default defineConfig({
  *   AutoImport({
  *     imports: [
@@ -34,6 +35,7 @@ export function createImport<T extends string[]>(packageName: string, exports: T
  *
  * // user
  * import LodashResolver from './resolver.js'
+ *
  * export default defineConfig({
  *   AutoImport({
  *     resolvers: [
@@ -68,9 +70,12 @@ export function createResolver<T extends string[]>(packageName: string, exports:
  * export default createImport('name', [] as const)
  * ```
  *
+ * To search `[` and `]`, use code like:
+ *
  * ```js
  * const search = createSearch('createImport')
- * const [start, end] = search(codeString) // index of [ and ]
+ * const [start, end] = search(codeString) // index of `[` and `]`
+ *
  * await fs.writeFile('path', codeString.slice(0, start) + JSON.stringify(['foo']) + codeString.slice(end) )
  * ```
  */

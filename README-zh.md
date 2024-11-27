@@ -63,7 +63,7 @@ export default defineConfig({
 
 ### 自动化
 
-使用内置的 `createSearch` 函数:
+使用内置的 `createSearch` 函数。 `search`的返回值为`[`和`]`的索引，你可以像这样使用它:
 
 ```js
 import { createSearch } from 'auto-import-help'
@@ -75,13 +75,38 @@ export default createImport('name', [] as const)
 `) // -> [87, 89]
 ```
 
-`search`的返回值为`[`和`]`的索引，你可以像这样使用它:
+假如你的代码如下:
 
-```js
-const code = await fs.readFile('path', 'utf-8')
+```ts
+// ./src/import.ts
+import { createImport } from 'auto-import-helper'
 
-const search = createSearch('createImport')
-const [start, end] = search(code)
+export default createImport('my-lib', [] as const)
+```
 
-await fs.writeFile('path', code.slice(0, start) + JSON.stringify(['foo']) + code.slice(end))
+可以在bundle前执行以下脚本:
+
+```ts
+// ./scripts/update-import
+
+import * as fs from 'node:fs/promises'
+import { createSearch } from 'auto-import-helper'
+
+// Exports of your lib
+const set = Object.keys(await import('../src/index'))
+
+await writeTo('src/import.ts', 'createImport', [...set])
+
+async function writeTo(path: string | URL, searchTarget: Parameters<typeof createSearch>[0], names: string[]) {
+  const code = await fs.readFile(path, 'utf-8')
+
+  const search = createSearch(searchTarget)
+  const val = search(code)
+  if (!val) {
+    throw new Error('Failed update import')
+  }
+  const [start, end] = val
+
+  await fs.writeFile(path, code.slice(0, start) + JSON.stringify([...names].sort()) + code.slice(end))
+}
 ```
